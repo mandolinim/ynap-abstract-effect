@@ -16,9 +16,6 @@ object AbstractMonad {
   def save[F[_]: Applicative](item: Item): F[Unit] =
     ().pure
 
-  def checkIn(qty: Int, item: Item): Item =
-    item.copy(qty = item.qty + qty)
-
   // typeclass
   import cats.Monad
 
@@ -29,17 +26,16 @@ object AbstractMonad {
 
   def program[F[_]: Monad]: F[Unit] =
     load[F](ItemId(52))
-      .map(item => checkIn(10, item))
+      .map(_.checkIn(10))
       .flatMap(updated => save[F](updated))
 
   def program2[F[_]: Monad]: F[Unit] =
     for {
       item    <- load[F](ItemId(42))
-      updated = checkIn(10, item)
+      updated = item.checkIn(10)
       _       <- save[F](updated)
     } yield ()
 
-  // run the computations
   def run(): Unit = {
     // typeclass instances for Try
     import cats.instances.try_._

@@ -12,17 +12,13 @@ object OptionMonad {
   def save(item: Item): Option[Unit] =
     Option(())
 
-  def checkIn(qty: Int, item: Item): Item =
-    item.copy(qty = item.qty + qty)
-
   val program: Option[Unit] =
     for {
       item    <- load(ItemId(42))
-      updated = checkIn(10, item)
+      updated = item.checkIn(10)
       _       <- save(updated)
     } yield ()
 
-  // run the computation
   def run(): Unit =
     println("Option: " + program.fold("error")(_ => "ok "))
 }

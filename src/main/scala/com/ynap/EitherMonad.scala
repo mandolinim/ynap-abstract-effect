@@ -14,17 +14,13 @@ object EitherMonad {
   def save(item: Item): Either[Error, Unit] =
     Right(())
 
-  def checkIn(qty: Int, item: Item): Item =
-    item.copy(qty = item.qty + qty)
-
   val program: Either[Error, Unit] =
     for {
       item    <- load(ItemId(42))
-      updated = checkIn(10, item)
+      updated = item.checkIn(10)
       _       <- save(updated)
     } yield ()
 
-  // run the computation
   def run(): Unit =
     println("Either: " + program.fold("error " + _, _ => "ok"))
 

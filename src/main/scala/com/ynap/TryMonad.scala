@@ -15,17 +15,13 @@ object TryMonad {
   def save(item: Item): Try[Unit] =
     Try(())
 
-  def checkIn(qty: Int, item: Item): Item =
-    item.copy(qty = item.qty + qty)
-
   val program: Try[Unit] =
     for {
       item    <- load(ItemId(42))
-      updated = checkIn(10, item)
+      updated = item.checkIn(10)
       _       <- save(updated)
     } yield ()
 
-  // run the computation
   def run(): Unit =
     println("Try: " + program.fold("error " + _.getMessage, _ => "ok"))
 

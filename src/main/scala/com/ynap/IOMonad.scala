@@ -15,17 +15,13 @@ object IOMonad {
   def save(item: Item): IO[Unit] =
     IO.unit
 
-  def checkIn(qty: Int, item: Item): Item =
-    item.copy(qty = item.qty + qty)
-
   val program: IO[Unit] =
     for {
       item    <- load(ItemId(42))
-      updated = checkIn(10, item)
+      updated = item.checkIn(10)
       _       <- save(updated)
     } yield ()
 
-  // run the computation
   def run(): Unit = {
     program.unsafeRunSync()
     println("IO: ok")
