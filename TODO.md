@@ -1,0 +1,14 @@
+- simulacrum
+- monad error
+    - pure/raiseError
+    - partial type-constructor application
+        - con type alias
+        - con kind-projector
+    - invece di fold, recover/recoverWith
+- liftF (integrare monad concreta in un flusso astratto)
+- item repository (trait algebra/classe concreta interpreter)
+    - in memory mutable
+    - in memory Ref
+- item service
+    - interpreter
+ 
