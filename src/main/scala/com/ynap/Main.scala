@@ -6,8 +6,9 @@ object Main extends App {
   TryMonad.run()
   EitherMonad.run()
   IOMonad.run()
-  FooDemo.run()
   AbstractMonad.run()
+
+  FooDemo.run()
 
   println("done")
 }
