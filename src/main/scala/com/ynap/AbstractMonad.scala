@@ -10,9 +10,6 @@ object AbstractMonad {
   // syntax for pure
   import cats.syntax.applicative._
 
-  case class ItemId(value: Int)
-  case class Item(id: ItemId, qty: Int)
-
   def load[F[_]: Applicative](id: ItemId): F[Item] =
     Item(id, 100).pure
 

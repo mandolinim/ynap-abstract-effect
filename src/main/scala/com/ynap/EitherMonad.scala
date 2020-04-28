@@ -2,9 +2,6 @@ package com.ynap
 
 object EitherMonad {
 
-  case class ItemId(value: Int)
-  case class Item(id: ItemId, qty: Int)
-
   type Error = String
 
   def createItem(id: Int, qty: String): Either[Error, Item] =

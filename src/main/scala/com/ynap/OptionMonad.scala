@@ -2,9 +2,6 @@ package com.ynap
 
 object OptionMonad {
 
-  case class ItemId(value: Int)
-  case class Item(id: ItemId, qty: Int)
-
   def createItem(id: Int, qty: String): Option[Item] =
     if (qty.matches("^[0-9]+$")) Some(Item(ItemId(id), qty.toInt))
     else None

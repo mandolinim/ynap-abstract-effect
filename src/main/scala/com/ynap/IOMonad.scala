@@ -4,9 +4,6 @@ import cats.effect.IO
 
 object IOMonad {
 
-  case class ItemId(value: Int)
-  case class Item(id: ItemId, qty: Int)
-
   def createItem(id: Int, qty: String): IO[Item] =
     IO {
       Item(ItemId(id), qty.toInt)

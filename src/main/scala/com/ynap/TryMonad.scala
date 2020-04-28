@@ -4,9 +4,6 @@ import scala.util._
 
 object TryMonad {
 
-  case class ItemId(value: Int)
-  case class Item(id: ItemId, qty: Int)
-
   def createItem(id: Int, qty: String): Try[Item] =
     Try {
       Item(ItemId(id), qty.toInt)
