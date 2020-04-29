@@ -1,5 +1,6 @@
 package com.ynap
 
+import cats.MonadError
 import cats.effect.IO
 
 object IOMonad {
@@ -22,7 +23,18 @@ object IOMonad {
       _       <- save(updated)
     } yield ()
 
+  val programBad: IO[Unit] =
+    for {
+      item <- createItem(42, "ASD")
+      _    <- save(item)
+    } yield ()
+
   def run(): Unit = {
+    println()
+    println("**************************************************")
+    println("***************** IO *****************************")
+    println()
+
     program.unsafeRunSync()
     println("IO: ok")
   }

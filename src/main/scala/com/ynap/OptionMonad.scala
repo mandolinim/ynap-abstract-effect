@@ -19,6 +19,18 @@ object OptionMonad {
       _       <- save(updated)
     } yield ()
 
-  def run(): Unit =
+  val programBad: Option[Unit] =
+    for {
+      item <- createItem(42, "ASD")
+      _    <- save(item)
+    } yield ()
+
+  def run(): Unit = {
+    println()
+    println("**************************************************")
+    println("***************** Option *************************")
+    println()
+
     println("Option: " + program.fold("error")(_ => "ok "))
+  }
 }

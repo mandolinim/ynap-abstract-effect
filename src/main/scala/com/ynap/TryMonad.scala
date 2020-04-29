@@ -22,7 +22,19 @@ object TryMonad {
       _       <- save(updated)
     } yield ()
 
-  def run(): Unit =
+  val programBad: Try[Unit] =
+    for {
+      item <- createItem(42, "ASD")
+      _    <- save(item)
+    } yield ()
+
+  def run(): Unit = {
+    println()
+    println("**************************************************")
+    println("***************** Try ****************************")
+    println()
+
     println("Try: " + program.fold("error " + _.getMessage, _ => "ok"))
+  }
 
 }

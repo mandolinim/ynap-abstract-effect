@@ -21,7 +21,23 @@ object EitherMonad {
       _       <- save(updated)
     } yield ()
 
-  def run(): Unit =
-    println("Either: " + program.fold("error " + _, _ => "ok"))
+  val programBad: Either[Error, Unit] =
+    for {
+      item <- createItem(42, "ASD")
+      _    <- save(item)
+    } yield ()
+
+  def run(): Unit = {
+    println()
+    println("**************************************************")
+    println("***************** Either *************************")
+    println()
+
+    val result = program.fold("error " + _, _ => "ok")
+    println("Either: " + result)
+
+    val resultBad = programBad.fold("error " + _, _ => "ok")
+    println("Either (bad program): " + resultBad)
+  }
 
 }

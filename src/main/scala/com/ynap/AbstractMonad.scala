@@ -1,53 +1,105 @@
 package com.ynap
 
-import scala.util.Try
-
 object AbstractMonad {
 
-  // typeclass
-  import cats.Applicative
+  // typeclasses
+  import cats.{ Applicative, Monad, MonadError }
 
-  // syntax for pure
-  import cats.syntax.applicative._
+  type Error = String
 
-  def load[F[_]: Applicative](id: ItemId): F[Item] =
+  // verbose F constraints w/out kind-projector support
+  // def createItem[F[_]](id: Int, qty: String)(implicit ME: MonadError[F, Error]): F[Item] = {
+  // compact F constraints w kind-projector support
+  def createItem[F[_]: MonadError[*[_], String]](id: Int, qty: String): F[Item] = {
+    import cats.implicits._
+
+    Either
+      .catchNonFatal(Item(ItemId(id), qty.toInt))
+      .leftMap(t => s"qty isn't an int (${t.getMessage})")
+      .liftTo[F]
+  }
+
+  def load[F[_]: Applicative](id: ItemId): F[Item] = {
+    import cats.syntax.applicative._
+
     Item(id, 100).pure
+  }
 
-  def save[F[_]: Applicative](item: Item): F[Unit] =
+  def save[F[_]: Applicative](item: Item): F[Unit] = {
+    import cats.syntax.applicative._
+
     ().pure
+  }
 
-  // typeclass
-  import cats.Monad
+  // verbose F constraints w/out kind-projector support
+  //  def program[F[_]](implicit M: Monad[F]): F[Unit] = {
+  // compact F constraints w kind-projector support
+  def program[F[_]: Monad]: F[Unit] = {
+    import cats.syntax.flatMap._
+    import cats.syntax.functor._
 
-  // syntax for map
-  import cats.syntax.functor._
-  // syntax for flatMap
-  import cats.syntax.flatMap._
-
-  def program[F[_]: Monad]: F[Unit] =
-    load[F](ItemId(52))
-      .map(_.checkIn(10))
-      .flatMap(updated => save[F](updated))
-
-  def program2[F[_]: Monad]: F[Unit] =
     for {
       item    <- load[F](ItemId(42))
       updated = item.checkIn(10)
       _       <- save[F](updated)
     } yield ()
+  }
+
+  // verbose F constraints w/out kind-projector support
+  // def programBad[F[_]](implicit M: Monad[F], ME: MonadError[F, Error]): F[Unit] = {
+  // compact F constraints w kind-projector support
+  def programBad[F[_]: Monad: MonadError[*[_], Error]]: F[Unit] = {
+    import cats.syntax.flatMap._
+    import cats.syntax.functor._
+
+    for {
+      item <- createItem[F](42, "ASD")
+      _    <- save[F](item)
+    } yield ()
+  }
 
   def run(): Unit = {
-    // typeclass instances for Try
+    println()
+    println("**************************************************")
+    println("***************** Abstract ***********************")
+    println()
+
+    runEither()
+    runTry()
+    runOption()
+    runIO()
+  }
+
+  def runEither(): Unit = {
+    import cats.instances.either._
+
+    val result = program[Either[String, *]].fold("error " + _, _ => "ok")
+    println("Either: " + result)
+
+    val resultBad = programBad[Either[String, *]].fold("error " + _, _ => "ok")
+    println("Either (bad program): " + resultBad)
+  }
+
+  def runTry(): Unit = {
     import cats.instances.try_._
-    println("Abstract w/ Try: " + program[Try].fold("error " + _.getMessage, _ => "ok"))
 
-    // typeclass instances for IO
-    import cats.effect.IO
-    program[IO].unsafeRunSync()
-    println("Abstract w/ IO: ok")
+    import scala.util.Try
 
-    // typeclass instances for Option
+    val result = program[Try].fold("error " + _.getMessage, _ => "ok")
+    println("Try: " + result)
+  }
+
+  def runOption(): Unit = {
     import cats.instances.option._
-    println("Abstract w/ Option: " + program[Option].fold("error")(_ => "ok"))
+
+    val result = program[Option].fold("error")(_ => "ok")
+    println("Option: " + result)
+  }
+
+  def runIO(): Unit = {
+    import cats.effect.IO
+
+    program[IO].unsafeRunSync()
+    println("IO: ok")
   }
 }
