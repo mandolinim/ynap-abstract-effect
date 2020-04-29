@@ -26,11 +26,13 @@ lazy val scalacSettings = Seq(
   "-explaintypes",
   "-opt-warnings",
   "-language:higherKinds",
+  "-language:implicitConversions",
   "-Yrangepos",
   "-Ywarn-numeric-widen",
   "-Ywarn-extra-implicit",
   "-Xlint:_,-unused",
-  "-Xfatal-warnings"
+  "-Xfatal-warnings",
+  "-Ymacro-annotations"
 )
 
 lazy val resolversSettings = Seq(
@@ -40,6 +42,7 @@ lazy val resolversSettings = Seq(
 )
 
 lazy val libsSettings = Seq(
+  "org.typelevel" %% "simulacrum" % "1.0.0",
   "org.typelevel" %% "cats-core"     % "2.1.1",
   "org.typelevel" %% "cats-effect"   % "2.1.2",
   "org.typelevel" %% "cats-mtl-core" % "0.7.1"

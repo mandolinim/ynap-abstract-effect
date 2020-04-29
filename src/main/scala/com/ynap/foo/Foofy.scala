@@ -1,11 +1,9 @@
 package com.ynap.foo
 
-trait Foofy[A] {
-  def foo(a: A): String
-}
+import simulacrum._
 
-object Foofy {
-  def apply[A](implicit instance: Foofy[A]): Foofy[A] = instance
+@typeclass trait Foofy[A] {
+  def foo(a: A): String
 }
 
 object instances {
@@ -18,14 +16,6 @@ object instances {
     implicit object FooString extends Foofy[String] {
       override def foo(a: String): String =
         s"foo-$a"
-    }
-  }
-}
-
-object syntax {
-  object foofy {
-    implicit class toFoofy[A](target: A)(implicit instance: Foofy[A]) {
-      def foo(): String = instance.foo(target)
     }
   }
 }

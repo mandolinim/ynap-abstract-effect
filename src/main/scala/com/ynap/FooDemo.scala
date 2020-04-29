@@ -11,10 +11,10 @@ object FooDemo {
     Foofy[A].foo(a)
 
   // syntax
-  import com.ynap.foo.syntax.foofy._
+  import com.ynap.foo.Foofy.ops._
 
   def demo2[A: Foofy](a: A): String =
-    a.foo()
+    a.foo
 
   def run(): Unit = {
     println("Foo: " + demo1(42))
